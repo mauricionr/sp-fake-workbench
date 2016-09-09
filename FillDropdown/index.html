@@ -5,20 +5,33 @@
   <script src="https://npmcdn.com/vue@next/dist/vue.js"></script>
 </head>
 <body>
-  <div id="app">
-    {{ buildNoticias }}
+  <div id="simbioxApp">
+    <filled-dropdown id="locations" method="get_Pais"></filled-dropdown>
   </div>
 
   <script>
-    new Vue({
-      el: '#app',
-      data: {
-        rowLimit: 5
+    "use strict"
+
+    var ddComponent = Vue.extend({
+      template:
+        '<select>{{options}}</select>',
+      data: function(){
+        return { options:["<option value=''>Selecione</option>"].join(" ") };
       },
-      methods: {
-        buildNoticias: function (url) {
-          return "<h2>Noticias</h2>"
-        }
+      props: ['method']
+    });
+    
+    Vue.component("filled-dropdown",ddComponent);
+
+    new Vue({
+      el: '#simbioxApp',
+      data: {
+        options : []
+      },
+      created: function () {
+        this.options.push({
+          val:1,opt:"Brasil"
+        });
       }
     })
   </script>
