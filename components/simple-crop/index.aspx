@@ -11,8 +11,6 @@
 </asp:Content>
 
 <asp:Content ContentPlaceHolderId="PlaceHolderMain" runat="server">
-
-
 <div id="app">
   <input type="file" value="Escolher imagem" id="inputImage" name="file" accept="image/*" />
   <div id="x-imageUploaderPreview" class="ms-hidden">
@@ -47,6 +45,7 @@
           </div>
         </div>
     </div>
+    <img id="preview" src="" alt="">
 </div>
 
 <script>
@@ -111,10 +110,8 @@ new Vue({
                 }
                 result = $image.cropper(data.method, data.option, data.secondOption);
                 var ImageBase64 = result.toDataURL('image/jpeg')
+                $('#preview').attr('src', ImageBase64)
                 $('[title="ImagemClean"]').val(ImageBase64)
-                $('#ctl00_ctl33_g_c8663e1d_d44b_4dc3_a077_6e60c0331aff_ff31_ctl00_ctl00_TextField_inplacerte').html([
-                    '<img src="', ImageBase64, '" />'
-                ].join(''))
                 $imageArea.addClass(hiddenClass)
             }
         });
@@ -147,8 +144,7 @@ new Vue({
         } else {
             $inputImage.prop('disabled', true).parent().addClass('disabled');
         }
-  },
-  methods:{}
+  }
 })
 
 </script>
