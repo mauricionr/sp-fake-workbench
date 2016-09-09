@@ -35,5 +35,5 @@ gulp.task("upload", () => {
 gulp.task("watch", function(){
     if(!argv.component) throw `Tell which component to watch`
     console.log(`Watching ${argv.component}`)
-    gulp.watch([`components/${argv.component}/*.aspx`], ["upload"]);
+    gulp.watch([`components/${argv.component}/*.*`], ["upload"]);
 });
