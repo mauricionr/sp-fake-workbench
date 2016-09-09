@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Welcome to Vue</title>
+  <script src="https://npmcdn.com/vue@next/dist/vue.js"></script>
+</head>
+<body>
+  <div id="app">
+    {{ buildNoticias }}
+  </div>
+
+  <script>
+    new Vue({
+      el: '#app',
+      data: {
+        rowLimit: 5
+      },
+      methods: {
+        buildNoticias: function (url) {
+          return "<h2>Noticias</h2>"
+        }
+      }
+    })
+  </script>
+</body>
+</html>
