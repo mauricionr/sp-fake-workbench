@@ -11,15 +11,12 @@ try {
 }
 
 gulp.task("upload", () => {
-
     if (global.settings.spsave.siteUrl === "") {
         throw "A required custom 'settings.js' file is not present in root of this repository. Make a copy of settings.example.js, rename it as settings.js, and fill out the appropriate settings for your site.";
     }
-
     if (!argv.component) {
         throw "Tell me wich component to upload"
     }
-
     console.log(`Starting ${argv.component}`)
     return gulp.src(`./components/${argv.component}/**`)
         .pipe(spsave({
