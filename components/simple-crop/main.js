@@ -1,101 +1,95 @@
-(function ($) {
-    $(function () {        
-        'use strict';
-        var console = window.console || { log: function () { } };
-        var $image = $('#image');
-        var options = {
-            aspectRatio: 16 / 9
-        };
-        // Cropper
-        $image.cropper(options);
-        // Buttons
-        if (!$.isFunction(document.createElement('canvas').getContext)) {
-            $('button[data-method="getCroppedCanvas"]').prop('disabled', true);
+(function (Vue, $) {
+    function initializeSxCropComponent(){
+        var CropComponent = Vue.extend(cropComponentDefinition)
+        Vue.component('sx-crop', CropComponent)
+        new Vue({
+            el:'#sx-crop'
+        })
+    }    
+    var cropComponentData = function(){
+        return {
+            image:null,
+            inputImage:null,
+            imageArea:null,
+            blobURL:null,
+            preview:null,
+            options:{
+                aspectRatio: 16 / 9
+            },
+            hiddenClass:'ms-hidden',
+            result:null,
+            method:'getCroppedCanvas',
+            ImageBase64:null,
+            spField:null
         }
-        // Options
-        $('.docs-toggles').on('change', 'input', function () {
-            var $this = $(this);
-            var name = $this.attr('name');
-            var type = $this.prop('type');
-            var cropBoxData;
-            var canvasData;
+    }
 
-            if (!$image.data('cropper')) {
+    var cropComponentReady = function(){
+        this.inputImage = $('#inputImage');
+        this.image = $('#image'); 
+        this.imageArea = $('#x-imageUploaderPreview');
+        this.URL = window.URL || window.webkitURL;
+        this.image.cropper(this.options);
+        this.preview = $('#preview');
+        this.spField = $('[title="'+this.campo+'"]');
+    }
+
+    var cropComponentMethods = {
+        onCropImage:function () {
+            this.result = this.image.cropper(this.method);
+            this.ImageBase64 = this.result.toDataURL('image/jpeg')
+            this.imageArea.addClass(this.hiddenClass)
+            if(this.spField){
+                this.spField.val(this.ImageBase64)
+            }
+        },
+        onImageChange:function (event) {
+            var files = event.target.files;
+            var file;
+            if (!this.image.data('cropper')) {
                 return;
             }
-
-            $image.cropper('destroy').cropper(options);
-        });
-
-
-        // Methods
-        $('body').on('click', '[data-method]', function () {
-            var $this = $(this);
-            var data = $this.data();
-            var $target;
-            var result;
-
-            if ($this.prop('disabled') || $this.hasClass('disabled')) {
-                return;
+            if (files && files.length) {
+                file = files[0];
+                if (/^image\/\w+$/.test(file.type)) {
+                    blobURL = this.URL.createObjectURL(file);
+                    this.image.one('built.cropper', function () {
+                        this.URL.revokeObjectURL(blobURL);
+                    }.bind(this))
+                    .cropper('reset')
+                    .cropper('replace', blobURL);
+                    this.inputImage.val('');
+                    this.imageArea.removeClass(this.hiddenClass)
+                } else {
+                    window.alert('Please choose an image file.');
+                }
             }
-
-            if ($image.data('cropper') && data.method) {
-                data = $.extend({}, data); // Clone a new one
-
-                if (typeof data.target !== 'undefined') {
-                    $target = $(data.target);
-
-                    if (typeof data.option === 'undefined') {
-                        try {
-                            data.option = JSON.parse($target.val());
-                        } catch (e) {
-                            console.log(e.message);
-                        }
-                    }
-                }
-                result = $image.cropper(data.method, data.option, data.secondOption);
-                var ImageBase64 = result.toDataURL('image/jpeg')
-                $('[title="ImagemClean"]').val(ImageBase64)
-                $('#ctl00_ctl33_g_c8663e1d_d44b_4dc3_a077_6e60c0331aff_ff31_ctl00_ctl00_TextField_inplacerte').html([
-                    '<img src="', ImageBase64, '" />'
-                ].join(''))
-                $imageArea.addClass(hiddenClass)
-            }
-        });
-
-        // Import image
-        var $inputImage = $('#inputImage');
-        var hiddenClass = 'ms-hidden'
-        var $imageArea = $('#x-imageUploaderPreview');
-        var URL = window.URL || window.webkitURL;
-        var blobURL;
-
-        if (URL) {
-            $inputImage.change(function () {
-                var files = this.files;
-                var file;
-                if (!$image.data('cropper')) {
-                    return;
-                }
-                if (files && files.length) {
-                    file = files[0];
-
-                    if (/^image\/\w+$/.test(file.type)) {
-                        blobURL = URL.createObjectURL(file);
-                        $image.one('built.cropper', function () {
-
-                            // Revoke when load complete
-                            URL.revokeObjectURL(blobURL);
-                        }).cropper('reset').cropper('replace', blobURL);
-                        $inputImage.val('');
-                        $imageArea.removeClass(hiddenClass)
-                    } else {
-                        window.alert('Please choose an image file.');
-                    }
-                }
-            });
-        } else {
-            $inputImage.prop('disabled', true).parent().addClass('disabled');
         }
-    });
-})(jQuery)
+    }
+
+    var cropComponentDefinition = {
+        props: ['campo'],
+        data: cropComponentData ,
+        ready:cropComponentReady,
+        methods:cropComponentMethods,
+        template: ['<div id="sxCropComponent" class="container">',
+                    '<input type="file" value="Escolher imagem" id="inputImage" v-on:change="onImageChange($event)" name="file" accept="image/*" />',
+                    '<div id="x-imageUploaderPreview" class="ms-hidden">',                    
+                            '<div class="img-container">',
+                            '<img id="image" src="" alt="Picture" />',
+                            '</div>',
+                            '<div>',
+                            '<button type="button" v-on:click="onCropImage($event)">Recortar</button>',
+                            '</div>',
+                        '</div>',
+                        '<img id="preview" src="{{ImageBase64}}" alt="" v-if="ImageBase64">',
+                    '</div>'].join('')
+    }
+
+    try{
+        _spBodyOnLoadFunctions.push(initializeSxCropComponent)
+    }catch(e){
+        initializeSxCropComponent()
+    }
+    
+})(Vue, jQuery)
