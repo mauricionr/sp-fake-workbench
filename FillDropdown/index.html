@@ -14,9 +14,23 @@
 
     var ddComponent = Vue.extend({
       template:
-        '<select>{{options}}</select>',
+        '<select v-model="selected">\
+          <option v-for="option in options" v-bind:value="option.value">\
+            {{ option.text }}\
+          </option>\
+        </select>',
       data: function(){
-        return { options:["<option value=''>Selecione</option>"].join(" ") };
+        var _data = {
+          selected: '-1',
+          options: [
+            { text: 'Selecione', value: '-1' }
+          ]
+        };
+        console.log(this)
+        return _data;
+      },
+      ready: function(){
+        debugger;
       },
       props: ['method']
     });
@@ -25,13 +39,10 @@
 
     new Vue({
       el: '#simbioxApp',
-      data: {
-        options : []
-      },
       created: function () {
-        this.options.push({
-          val:1,opt:"Brasil"
-        });
+        //this.options.push({
+        //  val:1,opt:"Brasil"
+        //});
       }
     })
   </script>
