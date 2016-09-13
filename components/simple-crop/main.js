@@ -37,7 +37,7 @@
     var cropComponentMethods = {
         onCropImage:function () {
             this.result = this.image.cropper(this.method);
-            this.ImageBase64 = this.result.toDataURL('image/jpeg')
+            this.ImageBase64 = this.result.toDataURL('image/png')
             this.imageArea.addClass(this.hiddenClass)
             if(this.spField){
                 this.spField.val(this.ImageBase64)
@@ -60,6 +60,7 @@
                     .cropper('replace', blobURL);
                     this.inputImage.val('');
                     this.imageArea.removeClass(this.hiddenClass)
+                    this.ImageBase64 = null;
                 } else {
                     window.alert('Please choose an image file.');
                 }
