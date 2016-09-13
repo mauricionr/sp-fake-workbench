@@ -40,10 +40,10 @@ var ddComponent = (function (Vue, jQuery) {
             this.Store.callCRMWs({
                 methodName: this.methodName,
                 rowLimit: '500'
-            })
+            }, this.storeKey)
             .done(this.applyResponse.bind(this));
         },
-        props: ['method-name']
+        props: ['method-name', 'storeKey', 'model']
     }
 
     Vue.component("filled-dropdown", ddComponent);
