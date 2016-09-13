@@ -20,7 +20,7 @@ var Store = (function (Vue, $) {
                 JSON.stringify(Parameters)
             };
         },
-        callCRMWs: function (options, key) {
+        callCRMWs: function (options) {
                 var dfd = $.ajax({
                     type: "GET",
                     url: this.wsUrl,
@@ -29,7 +29,7 @@ var Store = (function (Vue, $) {
                     contentType: "application/json; charset=utf-8"
                 })
                 .done(function(response){
-                    this.options[key] = response
+                    this.options[options.key || 'data'] = response
                 }.bind(this))
                 .fail(function (data) {
                     Utils.threatError(data);

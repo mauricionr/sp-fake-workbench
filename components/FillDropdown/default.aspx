@@ -7,7 +7,11 @@
 
 <asp:Content ContentPlaceHolderId="PlaceHolderMain" runat="server">
     <div id="contato">
-        <filled-dropdown method-name="proc_getPais" storeKey="paises" model="pais" parameter="{}"></filled-dropdown>
+        <cadastro>
+            <input type="text" v-model="new.name" />
+            <filled-dropdown method-name="proc_getPais" storeKey="paises" model="{{new}}" property="pais"></filled-dropdown>
+            <filled-dropdown method-name="proc_getPais" storeKey="paises" model="{{new}}" property="uf" parameters="{{{Name:'PAIS_ID', value:new.uf}}"></filled-dropdown>
+        </cadastro>
     </div>
     <script src="vue.js"></script>
     <script src="jquery.js"></script>
