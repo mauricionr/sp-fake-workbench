@@ -1,8 +1,5 @@
-new Vue({
-    el: 'body',
-    created: function () {
-    //this.options.push({
-    //  val:1,opt:"Brasil"
-    //});
-    }
+var vm = new Vue({
+    el: 'body'
 });
+
+//vm.$log()

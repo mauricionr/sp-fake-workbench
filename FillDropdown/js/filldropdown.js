@@ -2,12 +2,12 @@
 
 var ddComponent = {
     template:
-    '<select>\
+    '<select v-model>\
         <option v-for="option in options" v-bind:value="option.value">\
         {{ option.text }}\
         </option>\
     </select>',
-    data: function(){
+    data: function () {
         var _data = {
             selected: '-1',
             options: [
@@ -16,31 +16,32 @@ var ddComponent = {
         };
         return _data;
     },
-    ready: function(){
+    ready: function () {
         var component = this;
 
         store.callCRMWs({
-            methodName : component.methodName,
-            rowLimit : '500'
+            methodName: component.methodName,
+            rowLimit: '500'
         })
-        .done(function(data){
-            var parsedJson = JSON.parse(data);
-            
-            if(!parsedJson.Data.Error){
-                var rows = parsedJson.Data.rows.row;
-                for(var i = 0; i < rows.length; i++){
-                    component.options.push({
-                        text: rows[i].NOME,
-                        value:rows[i].ID
-                    });
-                }   
-            }
-            else{
-                Utils.threatError(data);
-            }
-        });
+            .done(function (data) {
+                var parsedJson = JSON.parse(data);
+
+                if (!parsedJson.Data.Error) {
+                    var rows = parsedJson.Data.rows.row;
+
+                    for (var i = 0; i < rows.length; i++) {
+                        component.options.push({
+                            text: rows[i].NOME,
+                            value: rows[i].ID
+                        });
+                    }
+                }
+                else {
+                    Utils.threatError(data);
+                }
+            });
     },
     props: ['method-name']
 }
 
-Vue.component("filled-dropdown",ddComponent);
+Vue.component("filled-dropdown", ddComponent);
