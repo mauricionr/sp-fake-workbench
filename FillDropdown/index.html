@@ -13,7 +13,7 @@
 
 <body>
   <h2>Cadastro Contato</h2>
-  <div class="form">
+  <div id="contato" class="form">
     <h3>Dados Básicos</h3>
     <table width="100%" cellpadding="0" cellspacing="0" border="0" id="dados-basicos">
       <tr>
@@ -31,7 +31,7 @@
       <tr>
         <td>Nacionalidade</td>
         <td>
-          <filled-dropdown class="paises" method-name="proc_getPais" storeKey="paises" model="pais"></filled-dropdown>
+          <filled-dropdown class="paises" method-name="proc_getPais" storeKey="paises" model="{{new}}" property="pais"></filled-dropdown>
         </td>
       </tr>
       <tr>
