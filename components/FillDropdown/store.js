@@ -1,10 +1,11 @@
 var Store = (function (Vue, $) {
     "use strict"
     return {
+        options:{
+            paises:null
+        },
         wsUrl: "http://dev-pna-crm.simbiox.com.br/_vti_bin/PNA.CRM.Components/Data.svc/GetJson",
         Parameters: function (options) {
-            debugger;
-
             var Parameters = [
                 { Name: "NOME", Value: "%%" },
                 { Name: "RowspPage", Value: options.rowLimit || 50 },
@@ -20,7 +21,6 @@ var Store = (function (Vue, $) {
             };
         },
         callCRMWs: function (options) {
-                debugger;
                 var dfd = $.ajax({
                     type: "GET",
                     url: this.wsUrl,
@@ -28,6 +28,9 @@ var Store = (function (Vue, $) {
                     data: this.Parameters(options),
                     contentType: "application/json; charset=utf-8"
                 })
+                .done(function(response){
+                    this.options[options.key || 'data'] = response
+                }.bind(this))
                 .fail(function (data) {
                     Utils.threatError(data);
                 });

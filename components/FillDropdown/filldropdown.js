@@ -3,7 +3,7 @@ var ddComponent = (function (Vue, jQuery) {
 
     var ddComponent = {
         template:
-        '<select>\
+        '<select v-model="model[property]">\
             <option v-for="option in options" v-bind:value="option.value">\
             {{ option.text }}\
             </option>\
@@ -39,11 +39,13 @@ var ddComponent = (function (Vue, jQuery) {
         created: function () {
             this.Store.callCRMWs({
                 methodName: this.methodName,
-                rowLimit: '500'
+                rowLimit: '500',
+                params:this.parameters,
+                key:this.storeKey
             })
             .done(this.applyResponse.bind(this));
         },
-        props: ['method-name']
+        props: ['method-name', 'storeKey', 'model', 'property', 'parameters']
     }
 
     Vue.component("filled-dropdown", ddComponent);
