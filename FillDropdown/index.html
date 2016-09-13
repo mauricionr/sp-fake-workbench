@@ -25,13 +25,13 @@
         <td><input type="text" id="nome_correspondencia" /></td>
       </tr>
       <tr>
-        <td>Sigla PNA</td>
+        <td>Sigla PNA</td>  
         <td><input type="text" id="sigla_pna" /></td>
       </tr>
       <tr>
         <td>Nacionalidade</td>
         <td>
-          <filled-dropdown class="paises" method-name="proc_getPais"></filled-dropdown>
+          <filled-dropdown class="paises" method-name="proc_getPais" storeKey="paises" model="pais"></filled-dropdown>
         </td>
       </tr>
       <tr>
@@ -278,10 +278,10 @@
     <input type="button" value="Enviar" />
   </div>
 
-  <script type="text/javascript" src="/style library/js/vue.js"></script>
-  <script type="text/javascript" src="/style library/js/store.js"></script>
-  <script type="text/javascript" src="/style library/js/filldropdown.js"></script>
-  <script type="text/javascript" src="/style library/js/contatos.forms.js"></script>
+  <script type="text/javascript" src="/style library/FillDropdown/vue.js"></script>
+  <script type="text/javascript" src="/style library/FillDropdown/store.js"></script>
+  <script type="text/javascript" src="/style library/FillDropdown/filldropdown.js"></script>
+  <script type="text/javascript" src="/style library/FillDropdown/contatos.forms.js"></script>
 </body>
 
 </html>

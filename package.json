@@ -1,0 +1,22 @@
+{
+  "name": "sx-components",
+  "version": "1.0.0",
+  "description": "Repository for generic components",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Mauricio Nunes <mreis@simbiox.com.br>",
+  "license": "MIT",
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "cropperjs": "^0.8.1",
+    "del": "^2.2.2",
+    "gulp": "^3.9.1",
+    "gulp-spsave": "^2.0.2",
+    "jquery": "^3.1.0",
+    "vue": "^1.0.26",
+    "vue-cli": "^2.3.1",
+    "yargs": "^5.0.0"
+  }
+}
