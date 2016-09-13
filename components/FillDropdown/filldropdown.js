@@ -43,7 +43,7 @@ var ddComponent = (function (Vue, jQuery) {
             }, this.storeKey)
             .done(this.applyResponse.bind(this));
         },
-        props: ['method-name', 'storeKey', 'model']
+        props: ['method-name', 'storeKey', 'model', 'parameters']
     }
 
     Vue.component("filled-dropdown", ddComponent);

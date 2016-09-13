@@ -7,7 +7,7 @@
 
 <asp:Content ContentPlaceHolderId="PlaceHolderMain" runat="server">
     <div id="contato">
-        <filled-dropdown method-name="proc_getPais"></filled-dropdown>
+        <filled-dropdown method-name="proc_getPais" storeKey="paises" model="pais" parameter="{}"></filled-dropdown>
     </div>
     <script src="vue.js"></script>
     <script src="jquery.js"></script>

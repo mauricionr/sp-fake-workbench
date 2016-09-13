@@ -21,7 +21,6 @@ var Store = (function (Vue, $) {
             };
         },
         callCRMWs: function (options, key) {
-                debugger;
                 var dfd = $.ajax({
                     type: "GET",
                     url: this.wsUrl,
