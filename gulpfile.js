@@ -18,12 +18,12 @@ gulp.task("upload", () => {
         throw "Tell me wich component to upload"
     }
     console.log(`Starting ${argv.component}`)
-    return gulp.src(`./components/${argv.component}/**`)
+    return gulp.src(`./FillDropDown/${argv.component}/**`)
         .pipe(spsave({
             username: global.settings.spsave.username,
             password: global.settings.spsave.password,
             siteUrl: global.settings.spsave.siteUrl,
-            folder: `Style%20Library/${argv.component}`,
+            folder: `${argv.destination}`,
             checkin: true,
             checkinType: 1
         }));
@@ -32,5 +32,5 @@ gulp.task("upload", () => {
 gulp.task("watch", function(){
     if(!argv.component) throw `Tell which component to watch`
     console.log(`Watching ${argv.component}`)
-    gulp.watch([`components/${argv.component}/*.*`], ["upload"]);
+    gulp.watch([`FillDropDown/${argv.component}/*.*`], ["upload"]);
 });

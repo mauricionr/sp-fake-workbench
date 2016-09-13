@@ -1,10 +1,9 @@
 var Store = (function (Vue, $) {
     "use strict"
     return {
-        options:{
-            paises:null
-        },
-        wsUrl: "http://dev-pna-crm.simbiox.com.br/_vti_bin/PNA.CRM.Components/Data.svc/GetJson",
+        options: {},
+        cadastroCRM: {},
+        wsUrl: "/_vti_bin/PNA.CRM.Components/Data.svc/GetJson",
         Parameters: function (options) {
             var Parameters = [
                 { Name: "NOME", Value: "%%" },
@@ -21,15 +20,21 @@ var Store = (function (Vue, $) {
             };
         },
         callCRMWs: function (options) {
-                var dfd = $.ajax({
-                    type: "GET",
-                    url: this.wsUrl,
-                    dataType: 'json',
-                    data: this.Parameters(options),
-                    contentType: "application/json; charset=utf-8"
-                })
-                .done(function(response){
-                    this.options[options.key || 'data'] = response
+            var dfd = $.ajax({
+                type: "GET",
+                url: this.wsUrl,
+                dataType: 'json',
+                data: this.Parameters(options),
+                contentType: "application/json; charset=utf-8"
+            })
+                .done(function (response) {
+                    var parsedJson = JSON.parse(response);
+
+                    if (!parsedJson.Data.Error)
+                        Vue.set(this.options, options.key || 'data', parsedJson.Data.rows.row);
+                    else
+                        Utils.threatError(data);
+
                 }.bind(this))
                 .fail(function (data) {
                     Utils.threatError(data);

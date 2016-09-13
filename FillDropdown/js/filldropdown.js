@@ -1,29 +1,15 @@
 var ddComponent = (function (Vue, jQuery) {
     "use strict"
-
     var ddComponent = {
         template:
-        '<select v-model="model[property]">\
-            <option v-for="option in Store.options[storeKey]" v-bind:value="option.value">\
-            {{ option.text }}\
+        '<select v-model="{{model[property]}}">\
+            <option v-for="option in Store.options[storeKey]" v-bind:value="option.ID">\
+                {{ option.NOME }}\
             </option>\
         </select>',
         methods: {
             applyResponse: function (data) {
-                debugger;
-                var parsedJson = JSON.parse(data);
-                if (!parsedJson.Data.Error) {
-                    var rows = parsedJson.Data.rows.row;
-                    for (var i = 0; i < rows.length; i++) {
-                        this.Store.options[this.storeKey].push({
-                            text: rows[i].NOME,
-                            value: rows[i].ID
-                        });
-                    }
-                }
-                else {
-                    Utils.threatError(data);
-                }
+                
             }
         },
         data: function () {
@@ -45,10 +31,7 @@ var ddComponent = (function (Vue, jQuery) {
             })
             .done(this.applyResponse.bind(this));
         },
-        props: ['method-name', 'storeKey', 'model', 'property', 'parameters']
+        props: ['method-name', 'store-key', 'model', 'property', 'parameters']
     }
-
-    Vue.component("filled-dropdown", ddComponent);
-
     return ddComponent;
 })(Vue, jQuery, Store)
