@@ -1,50 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Welcome to Vue</title>
-  <script src="https://npmcdn.com/vue@next/dist/vue.js"></script>
+  <title>Filled DD's</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.26/vue.js"></script>
+  <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+  <script type="text/javascript" src="../FillDropDown/store.js"/></script>
+  <script type="text/javascript" src="../FillDropDown/filldropdown.js"/></script>
+
 </head>
 <body>
   <div id="simbioxApp">
-    <filled-dropdown id="locations" method="get_Pais"></filled-dropdown>
+    <filled-dropdown id="locations" method-name="get_Pais"></filled-dropdown>
   </div>
-
-  <script>
-    "use strict"
-
-    var ddComponent = Vue.extend({
-      template:
-        '<select v-model="selected">\
-          <option v-for="option in options" v-bind:value="option.value">\
-            {{ option.text }}\
-          </option>\
-        </select>',
-      data: function(){
-        var _data = {
-          selected: '-1',
-          options: [
-            { text: 'Selecione', value: '-1' }
-          ]
-        };
-        console.log(this)
-        return _data;
-      },
-      ready: function(){
-        debugger;
-      },
-      props: ['method']
-    });
-    
-    Vue.component("filled-dropdown",ddComponent);
-
-    new Vue({
-      el: '#simbioxApp',
-      created: function () {
-        //this.options.push({
-        //  val:1,opt:"Brasil"
-        //});
-      }
-    })
-  </script>
 </body>
 </html>
