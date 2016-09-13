@@ -4,7 +4,7 @@ var ddComponent = (function (Vue, jQuery) {
     var ddComponent = {
         template:
         '<select v-model="model[property]">\
-            <option v-for="option in options" v-bind:value="option.value">\
+            <option v-for="option in Store.options[storeKey]" v-bind:value="option.value">\
             {{ option.text }}\
             </option>\
         </select>',
@@ -15,7 +15,7 @@ var ddComponent = (function (Vue, jQuery) {
                 if (!parsedJson.Data.Error) {
                     var rows = parsedJson.Data.rows.row;
                     for (var i = 0; i < rows.length; i++) {
-                        this.options.push({
+                        this.Store.options[this.storeKey].push({
                             text: rows[i].NOME,
                             value: rows[i].ID
                         });
