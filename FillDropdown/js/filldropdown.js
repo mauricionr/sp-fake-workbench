@@ -1,36 +1,21 @@
-"use strict"
+var ddComponent = (function (Vue, jQuery) {
+    "use strict"
 
-var ddComponent = {
-    template:
-    '<select v-model>\
-        <option v-for="option in options" v-bind:value="option.value">\
-        {{ option.text }}\
-        </option>\
-    </select>',
-    data: function () {
-        var _data = {
-            selected: '-1',
-            options: [
-                { text: 'Selecione', value: '-1' }
-            ]
-        };
-        return _data;
-    },
-    ready: function () {
-        var component = this;
-
-        store.callCRMWs({
-            methodName: component.methodName,
-            rowLimit: '500'
-        })
-            .done(function (data) {
+    var ddComponent = {
+        template:
+        '<select v-model="model[property]">\
+            <option v-for="option in Store.options[storeKey]" v-bind:value="option.value">\
+            {{ option.text }}\
+            </option>\
+        </select>',
+        methods: {
+            applyResponse: function (data) {
+                debugger;
                 var parsedJson = JSON.parse(data);
-
                 if (!parsedJson.Data.Error) {
                     var rows = parsedJson.Data.rows.row;
-
                     for (var i = 0; i < rows.length; i++) {
-                        component.options.push({
+                        this.Store.options[this.storeKey].push({
                             text: rows[i].NOME,
                             value: rows[i].ID
                         });
@@ -39,9 +24,31 @@ var ddComponent = {
                 else {
                     Utils.threatError(data);
                 }
-            });
-    },
-    props: ['method-name']
-}
+            }
+        },
+        data: function () {
+            var _data = {
+                selected: '-1',
+                options: [
+                    { text: 'Selecione', value: '-1' }
+                ],
+                Store: Store
+            };
+            return _data;
+        },
+        created: function () {
+            this.Store.callCRMWs({
+                methodName: this.methodName,
+                rowLimit: '500',
+                params:this.parameters,
+                key:this.storeKey
+            })
+            .done(this.applyResponse.bind(this));
+        },
+        props: ['method-name', 'storeKey', 'model', 'property', 'parameters']
+    }
 
-Vue.component("filled-dropdown", ddComponent);
+    Vue.component("filled-dropdown", ddComponent);
+
+    return ddComponent;
+})(Vue, jQuery, Store)

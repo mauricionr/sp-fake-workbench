@@ -1,5 +1,5 @@
-var vm = new Vue({
-    el: 'body'
-});
-
-//vm.$log()
+(function (Vue, jQuery) {
+    new Vue({
+        el: '#contato'
+    });
+})(Vue, jQuery)
