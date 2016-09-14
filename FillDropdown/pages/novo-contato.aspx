@@ -34,7 +34,7 @@
             <tr>
                 <td>Nacionalidade</td>
                 <td>
-                    <filled-dropdown method-name="proc_getPais" store-key="paises" model="Store.cadastroCRM" property="paises"></filled-dropdown>
+                    <filled-dropdown method-name="proc_getPais" store-key="paises" :model="Store.cadastroCRM" property="nacionalidade"></filled-dropdown>
                 </td>
             </tr>
             <tr>
@@ -48,7 +48,7 @@
             <tr>
                 <td>Idioma Principal</td>
                 <td>
-                    <filled-dropdown method-name="proc_getIdioma" store-key="idiomas" model="Store.cadastroCRM" property="idioma"></filled-dropdown>
+                    <filled-dropdown method-name="proc_getIdioma" store-key="idiomas" :model="Store.cadastroCRM" property="idiomaPrincipal"></filled-dropdown>
                 </td>
             </tr>
             <tr>
@@ -109,15 +109,13 @@
             <tr>
                 <td>Pais</td>
                 <td>
-                    <filled-dropdown method-name="proc_getPais" store-key="paises" model="Store.cadastroCRM" property="paises"></filled-dropdown>
+                    <filled-dropdown method-name="proc_getPais" store-key="paises" :model="Store.cadastroCRM" property="paisEndereco"></filled-dropdown>
                 </td>
             </tr>
             <tr>
                 <td>UF</td>
                 <td>
-                    <select id="uf">
-					<option selected="selected">Selecione um estado</option>
-				</select>
+                    <filled-dropdown method-name="proc_getUF" store-key="UF" :model="Store.cadastroCRM" property="UF" v-bind:pais="Store.cadastroCRM['paisEndereco']" v-bind:params="{ Name: 'PAIS_ID', Value: Store.cadastroCRM['paisEndereco'] }"></filled-dropdown>
                 </td>
             </tr>
             <tr>

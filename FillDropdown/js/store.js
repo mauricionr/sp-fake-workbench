@@ -30,10 +30,12 @@ var Store = (function (Vue, $) {
                 .done(function (response) {
                     var parsedJson = JSON.parse(response);
 
-                    if (!parsedJson.Data.Error)
-                        Vue.set(this.options, options.key || 'data', parsedJson.Data.rows.row);
+                    if (!parsedJson.Data.Error){
+                        var optArr = [{NOME:"Selecione",ID:"-1"}].concat(parsedJson.Data.rows.row);
+                        Vue.set(this.options, options.key || 'data', optArr);
+                    }                        
                     else
-                        Utils.threatError(data);
+                        Utils.threatError(JSON.parse(response));
 
                 }.bind(this))
                 .fail(function (data) {
