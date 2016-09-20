@@ -3,20 +3,13 @@
 <%@ Register Tagprefix="WebPartPages" Namespace="Microsoft.SharePoint.WebPartPages" Assembly="Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c" %>
 <asp:Content ContentPlaceHolderId="PlaceHolderAdditionalPageHead" runat="server">
 
-<link rel="stylesheet" href="cropper.min.css">
-<script src="jquery.js"></script>
-<script src="vue.js"></script>
-<script src="cropper.min.js"></script>
+<link rel="stylesheet" href="calendar.css">
 
 </asp:Content>
 
 <asp:Content ContentPlaceHolderId="PlaceHolderMain" runat="server">
-  
-  <div id="sx-crop">
-    <sx-crop campo="ImagemClean" lista="CompartilheImages"></sx-crop>
-  </div>
-
-  <script src="main.js"></script>
-
-  
+    <div id="sxCalendarApp"></div>
+    <script src="jquery.js"></script>
+    <script src="vue.js"></script>
+    <script src="index.js"></script>
 </asp:Content>

@@ -11,6 +11,7 @@ try {
 }
 
 gulp.task("upload", () => {
+    console.log(argv.component)
     if (global.settings.spsave.siteUrl === "") {
         throw "A required custom 'settings.js' file is not present in root of this repository. Make a copy of settings.example.js, rename it as settings.js, and fill out the appropriate settings for your site.";
     }
@@ -18,12 +19,12 @@ gulp.task("upload", () => {
         throw "Tell me wich component to upload"
     }
     console.log(`Starting ${argv.component}`)
-    return gulp.src(`./FillDropDown/${argv.component}/**`)
+    return gulp.src(`./components/${argv.component}/**`)
         .pipe(spsave({
             username: global.settings.spsave.username,
             password: global.settings.spsave.password,
             siteUrl: global.settings.spsave.siteUrl,
-            folder: `${argv.destination}`,
+            folder: `Style Library/components/${argv.component}`,
             checkin: true,
             checkinType: 1
         }));
@@ -32,5 +33,5 @@ gulp.task("upload", () => {
 gulp.task("watch", function(){
     if(!argv.component) throw `Tell which component to watch`
     console.log(`Watching ${argv.component}`)
-    gulp.watch([`FillDropDown/${argv.component}/*.*`], ["upload"]);
+    gulp.watch([`components/${argv.component}/*.*`], ["upload"]);
 });
