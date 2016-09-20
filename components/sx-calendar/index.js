@@ -2,21 +2,18 @@
     'use strict'
 
     var Calendar = {
-        el: '#sxCalendarApp',
         data: function () {
-            var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+            var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            var dates = ['sun', 'mon','tue','wed','thu','fri','sat'];
             return {
                 cache: {},
-                wrap: null,
                 label: months[new Date().getMonth()] + ' ' + new Date().getFullYear(),
                 months: months,
+                dates: dates,
                 calendar: [],
             }
         },
         methods: {
-            init: function init(newWrap) {
-                Vue.set(this, 'wrap', $(newWrap || "#cal"));
-            },
             switchMonth: function switchMonth(next, month, year) {
                 var curr = this.label.split(" "), calendar, tempYear = parseInt(curr[1], 10);
                 month = month || ((next) ? ((curr[0] === "December") ? 0 : this.months.indexOf(curr[0]) + 1) : ((curr[0] === "January") ? 11 : this.months.indexOf(curr[0]) - 1));
@@ -48,9 +45,10 @@
                 }
 
                 calendar = this.createCal(year, month);
+                calendar.month = month;
+                calendar.year = year;
                 Vue.set(this._data, 'calendar', calendar)
                 Vue.set(this._data, 'label', calendar.label)
-                console.log(this)
             },
             createCal: function createCal(year, month) {
                 var day = 1, i, j, haveDays = true,
@@ -99,15 +97,12 @@
                 return this.cache[year][month];
             }
         },
-        created: function () {
-            this.init()
-        },
         ready: function () {
             this.switchMonth(null, new Date().getMonth(), new Date().getFullYear());
         }
     };
 
-    var CalendarComponent = {
+    var CalendarComponent = Vue.extend({
         mixins: [Calendar],
         data: function () {
             return {
@@ -124,20 +119,14 @@
                         '</div>',
                         '<table id="days">',
                             '<thead>',
-                                '<td>sun</td>',
-                                '<td>mon</td> ',
-                                '<td>tue</td> ',
-                                '<td>wed</td> ',
-                                '<td>thu</td> ',
-                                '<td>fri</td> ',
-                                '<td>sat</td>',
+                                '<td v-for="date in dates">{{date}}</td>',
                             '</thead>',
                         '</table>  ',
                         '<div id="cal-frame">',
                             '<table class="curr">',
                                 '<tbody>',
                                     '<tr v-for="semana in calendar.data">',
-                                        '<td v-for="dia in semana">',
+                                        '<td v-for="dia in semana" class="{{!dia ? \'nil\': \'\'}}{{dia === new Date().getDate() && new Date().getMonth() === calendar.month ? \'today\' : \'\'}}">',
                                         '{{dia}}',
                                         '</td>',
                                     '</tr>',
@@ -145,8 +134,13 @@
                             '</table>',
                         '</div>',
                     '</div>'].join('')
-    }
+    })
 
-    new Vue(CalendarComponent);
+    new Vue({
+        el: '#sxCalendarApp',
+        components:{
+            'sx-calendar':CalendarComponent
+        }
+    });
 
 })(Vue)
