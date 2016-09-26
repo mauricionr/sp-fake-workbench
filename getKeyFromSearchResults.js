@@ -11,5 +11,5 @@ function getKeyFromSearchResults(key, retorno, current) {
 
 /**
  * 
- * var valor = Cell.results.reduce(getKeyFromSearchResults.bind(null, 'Title'))
+ * var valor = Cell.results.reduce(getKeyFromSearchResults.bind(null, 'Title'), '')
  */
