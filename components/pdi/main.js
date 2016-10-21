@@ -46,8 +46,8 @@ var RelatorioAPI = (function (pnp) {
             return current;
         })
     }
-    function findPdiItem(current, revisao){
-        return revisao.PDIId === current.Id
+    function findPdiItem(current, item){
+        return item.PDIId === current.Id
     }
     return {
         Util: Util,
@@ -90,14 +90,14 @@ var RelatorioAPI = (function (pnp) {
                     <td>
                         <table>
                             <tr v-for="meta in item.Metas">
-                                <td>Meta: PDI Id {{meta.PDIId}}</td>
+                                <td>Meta do PDI {{meta.PDIId}}</td>
                             </tr>
                         </table>
                     </td>
                     <td>
                          <table>
                             <tr v-for="revisao in item.Revisoes">
-                                <td>Revisao: PDI Id {{revisao.PDIId}}</td>
+                                <td>Revisao do PDI {{revisao.PDIId}}</td>
                             </tr>
                         </table>
                     </td>
