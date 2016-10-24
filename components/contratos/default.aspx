@@ -8,30 +8,7 @@
 
 <asp:Content ContentPlaceHolderId="PlaceHolderMain" runat="server">
     <section id="app">
-         <h4>Relatorio de PDI</h4>
-        <div v-if="loading">Loading...</div>
-        <table v-cloak v-if="!loading">
-            <tr v-if="data.length === 0">
-                <td colspan="3">Nenhum item encontrado</td>
-            </tr>
-            <tr v-for="item in data">
-                <td>PDI {{item.Id}}</td>
-                <td>
-                    <table>
-                        <tr v-for="meta in item.Metas">
-                            <td>Meta do PDI {{meta.PDIId}}</td>
-                        </tr>
-                    </table>
-                </td>
-                <td>
-                        <table>
-                        <tr v-for="revisao in item.Revisoes">
-                            <td>Revisao do PDI {{revisao.PDIId}}</td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-        </table>
+         
     </section>
     <script src="vue.js"></script>
     <script src="pnp.min.js"></script>
