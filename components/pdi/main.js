@@ -35,7 +35,7 @@ var RelatorioAPI = (function (pnp) {
                 .then(function (items) {
                     if (items.hasNext) {
                         response = response.concat(items.results)
-                        getItem(items.getNext(), response)
+                        getItems(items.getNext(), response)
                     } else {
                         response = response.concat(items.results)
                         resolve(items.results)
