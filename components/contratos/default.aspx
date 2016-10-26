@@ -12,5 +12,6 @@
     </section>
     <script src="vue.js"></script>
     <script src="pnp.min.js"></script>
+    <script src="validateDate.js"></script>
     <script src="main.js"></script>
 </asp:Content>

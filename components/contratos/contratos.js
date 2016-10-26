@@ -1,3 +1,5 @@
+
+
 var ContratoStore = (function (pnp) {
     return {
         root: 'ContratosAditivos',
@@ -25,6 +27,10 @@ var ContratoMixins = (function (Vue, $) {
             },
             setFolderAlredyExist: function (response) {
                 Vue.set(this, 'folderAlredyExist', true)
+            },
+            checkIEndDatefIsLessThanStartDate: function (startDate, lastDate) {
+                debugger
+                return moment([lastDate.getFullYear(), lastDate.getMonth(), lastDate.getDate()]).diff(moment([startDate.getFullYear(), startDate.getMonth(), startDate.getDate()])) < 0 ? true : false
             }
         },
         created: function () {
@@ -43,7 +49,9 @@ var ContratosAPI = (function (Vue, $, pnp, ContratoStore, ContratoMixins) {
                 contratoTitle: '#contrato-title input',
                 contratos: ContratoStore,
                 fakeBtnSave: '#fakeBtnSave input',
-                originalBtnSave: '#originalBtnSave input'
+                originalBtnSave: '#originalBtnSave input',
+                dataInicioContrato: '[title^="Data de Início"]',
+                dataTerminoContrato: '[title^="Data de Término"]'
             }
         },
         methods: {
@@ -55,6 +63,11 @@ var ContratosAPI = (function (Vue, $, pnp, ContratoStore, ContratoMixins) {
                 $(this.contratoTitle).on('blur', this.contratoBlur.bind(this))
             },
             saveContrato: function () {
+                debugger
+                if (this.checkIEndDatefIsLessThanStartDate(new Date(document.querySelector(this.dataInicioContrato).value), new Date(document.querySelector(this.dataTerminoContrato).value))) {
+                    return
+                }
+
                 if (this.createdNow) this.originalSave();
 
                 if (this.folderAlredyExist) {
@@ -80,6 +93,7 @@ var ContratosAPI = (function (Vue, $, pnp, ContratoStore, ContratoMixins) {
     })
 })(Vue, jQuery, $pnp, ContratoStore, ContratoMixins);
 
+
 var AditivosAPI = (function (Vue, $, pnp, ContratoStore, ContratoMixins) {
     return new Vue({
         el: '#aditivos-new-form-app',
@@ -91,18 +105,36 @@ var AditivosAPI = (function (Vue, $, pnp, ContratoStore, ContratoMixins) {
                 numContratoSeletor: '#aditivo-numero-contrato select',
                 aditivoTitle: '#aditivo-title input',
                 fakeBtnSave: '#fakeBtnSave input',
-                originalBtnSave: '#originalBtnSave input'
+                originalBtnSave: '#originalBtnSave input',
+                contratoInfosSeletor: {
+                    'NumeroContrato': this.getField('#aditivo-numero-contrato input', 'text'),
+                    'SolicitanteId': this.getField('#solicitante-contrato span[id$="UserField"] input', 'person'),
+                    'GestorAreaId': this.getField('#gestor-area span[id$="UserField"] input', 'person'),
+                    'GestorContratoId': this.getField('#gestor-contrato span[id$="UserField"] input', 'person'),
+                    'DataInicio': this.getField('#data-inicio input', 'date'),
+                    'DataTermino': this.getField('#data-termino input', 'date'),
+                    'Empresa': this.getField('#contrato-empresa input', 'text'),
+                    'OrigemNecessidade': this.getField('#origem-necessidade input', 'text'),
+                    'EstabEntrega': this.getField('#entrega input', 'text'),
+                    'EstabCobranca': this.getField('#cobranca input', 'text'),
+                    'EstabFaturamento': this.getField('#faturamento input', 'text')
+                },
+                selectContrato: '*,GestorContrato/Title,GestorContrato/ID,Solicitante/Title,Solicitante/ID,GestorArea/Title,GestorArea/ID,TipoDespesa/Title,TipoDespesa/ID,CentroCusto/Title,CentroCusto/ID',
+                expandContrato: 'GestorContrato/Title,GestorContrato/ID,Solicitante/Title,Solicitante/ID,GestorArea/Title,GestorArea/ID,TipoDespesa/Title,TipoDespesa/ID,CentroCusto/Title,CentroCusto/ID'
             }
         },
         methods: {
+            getField: function (seletor, type) {
+                return { seletor: seletor, type: type }
+            },
             initializeNewForm: function () {
-                $(this.aditivoTitle).on('blur', this.checkAditivoFolder.bind(this))
-                $(this.contratoSeletor).on('change', this.setContratoId.bind(this))
-                $(this.numContratoSeletor).on('change', this.setContratoId.bind(this))
-                $(this.fakeBtnSave).on('click', this.saveAditivo.bind(this))
+                $.getScript('/_layouts/15/clientpeoplepicker.js', function () {
+                    $(this.aditivoTitle).on('blur', this.checkAditivoFolder.bind(this))
+                    $(this.contratoSeletor).on('change', this.setContratoId.bind(this))
+                    $(this.fakeBtnSave).on('click', this.saveAditivo.bind(this))
+                }.bind(this))
             },
             saveAditivo: function (event) {
-                debugger
                 if (this.createdNow) this.originalSave();
                 if (this.folderAlredyExist) {
                     return this.originalSave();
@@ -113,12 +145,43 @@ var AditivosAPI = (function (Vue, $, pnp, ContratoStore, ContratoMixins) {
                         .then(this.originalSave)
                 }
             },
+            setContratoVals: function () {
+                for (var key in this.contratoInfosSeletor) {
+                    var obj = this.contratoInfosSeletor[key]
+                    var value = '';
+                    switch (obj.type) {
+                        case 'text':
+                            value = this.contrato[key]
+                            break;
+                        case 'date':
+                            value = this.contrato[key].split('T')[0].split('-').reverse().join('/')
+                            break;
+                        case 'person':
+                            value = this.contrato[key.replace('Id', '')].Title;
+                            break
+                    }
+                    debugger
+                    var input = document.querySelector(obj.seletor);
+                    if (input) {
+                        input.value += value || ''
+                    }
+                }
+            },
             setContratoId: function (event) {
                 if (event.target.value === '0') return
                 Vue.set(this, 'contratoID', event.target.value);
-                pnp.sp.web.lists.getByTitle('Contratos').items.getById(this.contratoID).get().then(function (response) {
-                    Vue.set(this, 'contrato', response);
-                }.bind(this))
+                pnp.sp.web
+                    .lists
+                    .getByTitle('Contratos')
+                    .items
+                    .getById(this.contratoID)
+                    .select(this.selectContrato)
+                    .expand(this.expandContrato)
+                    .get()
+                    .then(function (response) {
+                        Vue.set(this, 'contrato', response);
+                        this.setContratoVals()
+                    }.bind(this))
             },
             checkAditivoFolder: function (event) {
                 if (!event.target.value) return
@@ -130,4 +193,3 @@ var AditivosAPI = (function (Vue, $, pnp, ContratoStore, ContratoMixins) {
         }
     })
 })(Vue, jQuery, $pnp, ContratoStore, ContratoMixins);
-
