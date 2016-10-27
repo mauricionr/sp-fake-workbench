@@ -27,11 +27,9 @@ var ContratoMixins = (function (Vue, $) {
                 Vue.set(this, 'folderAlredyExist', true)
             },
             checkIEndDatefIsLessThanStartDate: function (startDate, lastDate) {
-                debugger
-                return moment([lastDate.getFullYear(), lastDate.getMonth(), lastDate.getDate()]).diff(moment([startDate.getFullYear(), startDate.getMonth(), startDate.getDate()])) < 0 ? true : false
-            },
-            SetAndResolvePeoplePicker: function (fieldName, userAccountName) {
-                debugger
+                startDate = startDate.split('/');
+                lastDate = lastDate.split('/')
+                return moment([lastDate[2], lastDate[1], lastDate[0]]).diff(moment([startDate[2], startDate[1], startDate[0]]), 'days') < 0 ? true : false
             }
         },
         created: function () {
@@ -64,8 +62,11 @@ var ContratosAPI = (function (Vue, $, pnp, ContratoStore, ContratoMixins) {
                 $(this.contratoTitle).on('blur', this.contratoBlur.bind(this))
             },
             saveContrato: function () {
-                debugger
-                if (this.checkIEndDatefIsLessThanStartDate(new Date(document.querySelector(this.dataInicioContrato).value), new Date(document.querySelector(this.dataTerminoContrato).value))) {
+                if (this.checkIEndDatefIsLessThanStartDate(
+                    document.querySelector(this.dataInicioContrato).value,
+                    document.querySelector(this.dataTerminoContrato).value)
+                ) {
+                    alert('Data de término do contrato não pode ser menor que a data de ínicio do contrato')
                     return
                 }
 
