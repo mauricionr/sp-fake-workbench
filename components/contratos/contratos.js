@@ -1,5 +1,3 @@
-
-
 var ContratoStore = (function (pnp) {
     return {
         root: 'ContratosAditivos',
@@ -31,6 +29,9 @@ var ContratoMixins = (function (Vue, $) {
             checkIEndDatefIsLessThanStartDate: function (startDate, lastDate) {
                 debugger
                 return moment([lastDate.getFullYear(), lastDate.getMonth(), lastDate.getDate()]).diff(moment([startDate.getFullYear(), startDate.getMonth(), startDate.getDate()])) < 0 ? true : false
+            },
+            SetAndResolvePeoplePicker: function (fieldName, userAccountName) {
+                debugger
             }
         },
         created: function () {
@@ -107,10 +108,11 @@ var AditivosAPI = (function (Vue, $, pnp, ContratoStore, ContratoMixins) {
                 fakeBtnSave: '#fakeBtnSave input',
                 originalBtnSave: '#originalBtnSave input',
                 contratoInfosSeletor: {
-                    'NumeroContrato': this.getField('#aditivo-numero-contrato input', 'text'),
-                    'SolicitanteId': this.getField('#solicitante-contrato span[id$="UserField"] input', 'person'),
-                    'GestorAreaId': this.getField('#gestor-area span[id$="UserField"] input', 'person'),
-                    'GestorContratoId': this.getField('#gestor-contrato span[id$="UserField"] input', 'person'),
+                    'Title': this.getField('#aditivo-titulo-contrato select', 'lookup'),
+                    'NumeroContrato': this.getField('#aditivo-numero-contrato select', 'lookup'),
+                    'SolicitanteId': this.getField('#solicitante-contrato', 'person'),
+                    'GestorAreaId': this.getField('#gestor-area', 'person'),
+                    'GestorContratoId': this.getField('#gestor-contrato', 'person'),
                     'DataInicio': this.getField('#data-inicio input', 'date'),
                     'DataTermino': this.getField('#data-termino input', 'date'),
                     'Empresa': this.getField('#contrato-empresa input', 'text'),
@@ -119,8 +121,8 @@ var AditivosAPI = (function (Vue, $, pnp, ContratoStore, ContratoMixins) {
                     'EstabCobranca': this.getField('#cobranca input', 'text'),
                     'EstabFaturamento': this.getField('#faturamento input', 'text')
                 },
-                selectContrato: '*,GestorContrato/Title,GestorContrato/ID,Solicitante/Title,Solicitante/ID,GestorArea/Title,GestorArea/ID,TipoDespesa/Title,TipoDespesa/ID,CentroCusto/Title,CentroCusto/ID',
-                expandContrato: 'GestorContrato/Title,GestorContrato/ID,Solicitante/Title,Solicitante/ID,GestorArea/Title,GestorArea/ID,TipoDespesa/Title,TipoDespesa/ID,CentroCusto/Title,CentroCusto/ID'
+                selectContrato: '*,GestorContrato/Name,GestorContrato/Title,GestorContrato/ID,Solicitante/Name,Solicitante/Title,Solicitante/ID,GestorArea/Name,GestorArea/Title,GestorArea/ID,TipoDespesa/Title,TipoDespesa/ID,CentroCusto/Title,CentroCusto/ID',
+                expandContrato: 'GestorContrato/Name,GestorContrato/Title,GestorContrato/ID,Solicitante/Name,Solicitante/Title,Solicitante/ID,GestorArea/Name,GestorArea/Title,GestorArea/ID,TipoDespesa/Title,TipoDespesa/ID,CentroCusto/Title,CentroCusto/ID'
             }
         },
         methods: {
@@ -131,6 +133,7 @@ var AditivosAPI = (function (Vue, $, pnp, ContratoStore, ContratoMixins) {
                 $.getScript('/_layouts/15/clientpeoplepicker.js', function () {
                     $(this.aditivoTitle).on('blur', this.checkAditivoFolder.bind(this))
                     $(this.contratoSeletor).on('change', this.setContratoId.bind(this))
+                    $(this.numContratoSeletor).on('change', this.setContratoId.bind(this))
                     $(this.fakeBtnSave).on('click', this.saveAditivo.bind(this))
                 }.bind(this))
             },
@@ -157,13 +160,17 @@ var AditivosAPI = (function (Vue, $, pnp, ContratoStore, ContratoMixins) {
                             value = this.contrato[key].split('T')[0].split('-').reverse().join('/')
                             break;
                         case 'person':
-                            value = this.contrato[key.replace('Id', '')].Title;
+                            value = this.contrato[key.replace('Id', '')].Name;
+                            $(obj.seletor + ' [id$="containerCell"] div, ' + obj.seletor + ' [id$="containerCell"] textarea').text(value);
+                            $(obj.seletor + ' a[id$="checkNames"]').click()
                             break
+                        case 'lookup':
+                            value = this.contrato.Id
+                            break;
                     }
-                    debugger
-                    var input = document.querySelector(obj.seletor);
-                    if (input) {
-                        input.value += value || ''
+                    var input = $(obj.seletor);
+                    if (input && obj.type !== 'person') {
+                        input.val(value || '')
                     }
                 }
             },
