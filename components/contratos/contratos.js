@@ -27,10 +27,26 @@ var ContratoMixins = (function (Vue, $) {
                 Vue.set(this, 'folderAlredyExist', true)
             },
             checkIEndDatefIsLessThanStartDate: function (startDate, lastDate) {
-                startDate = startDate.split('/');
-                lastDate = lastDate.split('/')
+                startDate = this.getDateArray(startDate);
+                lastDate = this.getDateArray(lastDate);
                 return moment([lastDate[2], lastDate[1], lastDate[0]]).diff(moment([startDate[2], startDate[1], startDate[0]]), 'days') < 0 ? true : false
-            }
+            },
+            checkDataLiberacaoEaprovacao: function (startDate, lastDate, dataLiberacao, dataAprovacao) {
+                startDate = this.getDateArray(startDate);
+                startDate = moment([startDate[2], startDate[1], startDate[0]])
+                lastDate = this.getDateArray(lastDate);
+                lastDate = moment([lastDate[2], lastDate[1], lastDate[0]])
+
+                dataLiberacao = this.getDateArray(dataLiberacao);
+                dataLiberacao = moment([dataLiberacao[2], dataLiberacao[1], dataLiberacao[0]])
+                dataAprovacao = this.getDateArray(dataAprovacao);
+                dataAprovacao = moment([dataAprovacao[2], dataAprovacao[1], dataAprovacao[0]])
+
+                return ((dataLiberacao.diff(startDate, 'days') > 0) || (dataLiberacao.diff(lastDate, 'days') < 0) || (dataAprovacao.diff(startDate, 'days') > 0) || (dataAprovacao.diff(lastDate, 'days') < 0)) ? true : false
+            },
+            getDateArray: function (dateString) {
+                return dateString.split('/');
+            },
         },
         created: function () {
             $(this.initializeNewForm.bind(this))
@@ -50,7 +66,9 @@ var ContratosAPI = (function (Vue, $, pnp, ContratoStore, ContratoMixins) {
                 fakeBtnSave: '#fakeBtnSave input',
                 originalBtnSave: '#originalBtnSave input',
                 dataInicioContrato: '[title^="Data de Início"]',
-                dataTerminoContrato: '[title^="Data de Término"]'
+                dataTerminoContrato: '[title^="Data de Término"]',
+                dataLiberacao: '[title^="Data da Liberação"]',
+                dataAprovacao: '[title^="Data da Aprovação"]'
             }
         },
         methods: {
@@ -62,21 +80,28 @@ var ContratosAPI = (function (Vue, $, pnp, ContratoStore, ContratoMixins) {
                 $(this.contratoTitle).on('blur', this.contratoBlur.bind(this))
             },
             saveContrato: function () {
-                if (this.checkIEndDatefIsLessThanStartDate(
-                    document.querySelector(this.dataInicioContrato).value,
-                    document.querySelector(this.dataTerminoContrato).value)
-                ) {
-                    alert('Data de término do contrato não pode ser menor que a data de ínicio do contrato')
+                var dataInicio = document.querySelector(this.dataInicioContrato).value;
+                var dataFim = document.querySelector(this.dataTerminoContrato).value;
+                var dataLiberacao = document.querySelector(this.dataLiberacao).value;
+                var dataAprovacao = document.querySelector(this.dataAprovacao).value;
+                if (this.checkIEndDatefIsLessThanStartDate(dataInicio, dataFim)) {
+                    alert('Data de término do contrato não pode ser inferior que a data de ínicio do contrato')
                     return
                 }
-
-                if (this.createdNow) this.originalSave();
-
+                if (!this.checkDataLiberacaoEaprovacao(dataInicio, dataFim, dataLiberacao, dataAprovacao)) {
+                    alert('O campo "Data Liberação" e "Data Aprovação" inferior a data do campo "Data de Inicio do Contrato" e superior a data do campo "Data de Término do Contrato"')
+                    return
+                }
+                if (this.createdNow) {
+                    this.originalSave();
+                }
                 if (this.folderAlredyExist) {
                     alert('Um contrato com este Titulo ja existe')
-                    return false
+                    return
                 } else {
-                    if (!this.ContratoTitle) return
+                    if (!this.ContratoTitle) {
+                        return
+                    }
                     this.contratos
                         .createContratoFolder(this.ContratoTitle)
                         .then(this.originalSave)
