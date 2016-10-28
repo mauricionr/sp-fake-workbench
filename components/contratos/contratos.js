@@ -15,7 +15,17 @@ var ContratoStore = (function (pnp) {
 
 var ContratoMixins = (function (Vue, $) {
     return {
+        data: function () {
+            return {
+                disabledFields: '.disabled *',
+            }
+        },
         methods: {
+            setDisableFields: function () {
+                // $(this.disabledFields)
+                //     .attr('disabled', true)
+                //     .attr('contenteditable', false)
+            },
             originalSave: function (response) {
                 Vue.set(this, 'createdNow', true)
                 $(this.originalBtnSave).click()
@@ -24,7 +34,14 @@ var ContratoMixins = (function (Vue, $) {
                 Vue.set(this, 'folderAlredyExist', false)
             },
             setFolderAlredyExist: function (response) {
-                Vue.set(this, 'folderAlredyExist', true)
+                pnp.sp.web.lists.getByTitle('Contratos').filter('Title eq '+ $(this.contratoTitle).val()).get().then(function(response){
+                    if(response.length > 0){
+                        Vue.set(this, 'folderAlredyExist', true)
+                    }else{
+                        Vue.set(this, 'folderAlredyExist', false)
+                    }
+                    
+                })
             },
             checkIEndDatefIsLessThanStartDate: function (startDate, lastDate) {
                 startDate = this.getDateArray(startDate);
@@ -42,7 +59,7 @@ var ContratoMixins = (function (Vue, $) {
                 dataAprovacao = this.getDateArray(dataAprovacao);
                 dataAprovacao = moment([dataAprovacao[2], dataAprovacao[1], dataAprovacao[0]])
 
-                return ((dataLiberacao.diff(startDate, 'days') > 0) || (dataLiberacao.diff(lastDate, 'days') < 0) || (dataAprovacao.diff(startDate, 'days') > 0) || (dataAprovacao.diff(lastDate, 'days') < 0)) ? true : false
+                return ((dataLiberacao.diff(startDate, 'days') >= 0) || (dataLiberacao.diff(lastDate, 'days') <= 0) || (dataAprovacao.diff(startDate, 'days') >= 0) || (dataAprovacao.diff(lastDate, 'days') <= 0)) ? true : false
             },
             getDateArray: function (dateString) {
                 return dateString.split('/');
@@ -50,6 +67,7 @@ var ContratoMixins = (function (Vue, $) {
         },
         created: function () {
             $(this.initializeNewForm.bind(this))
+            $(this.setDisableFields.bind(this))
         },
     }
 })(Vue, jQuery)
@@ -135,7 +153,7 @@ var AditivosAPI = (function (Vue, $, pnp, ContratoStore, ContratoMixins) {
                 originalBtnSave: '#originalBtnSave input',
                 contratoInfosSeletor: {
                     'Title': this.getField('#aditivo-titulo-contrato select', 'lookup'),
-                    'NumeroContrato': this.getField('#aditivo-numero-contrato select', 'lookup'),
+                    'NumeroContrato': this.getField('#aditivo-numero-contrato input', 'text'),
                     'SolicitanteId': this.getField('#solicitante-contrato', 'person'),
                     'GestorAreaId': this.getField('#gestor-area', 'person'),
                     'GestorContratoId': this.getField('#gestor-contrato', 'person'),
