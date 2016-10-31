@@ -28,17 +28,26 @@ var RelatorioAPI = (function (pnp) {
             })
         }
     }
-    function getItems(promise, response) {
+    function getItems(promise, response, firstResolve) {
         response = response || [];
         return new Promise(function (resolve, reject) {
             promise
                 .then(function (items) {
+                    response = response.concat(items.results)
+                    return items;
+                })
+                .then(function (items) {
                     if (items.hasNext) {
-                        response = response.concat(items.results)
-                        getItems(items.getNext(), response)
+                        if (!firstResolve) {
+                            firstResolve = resolve;
+                        }
+                        getItems(items.getNext(), response, firstResolve)
                     } else {
-                        response = response.concat(items.results)
-                        resolve(items.results)
+                        if (firstResolve) {
+                            firstResolve(response)
+                        } else {
+                            resolve(items.results)
+                        }
                     }
                 })
         })
@@ -46,7 +55,7 @@ var RelatorioAPI = (function (pnp) {
     function getData(top) {
         return new Promise(function (resolve, reject) {
             var promises = [];
-            promises.push(getItems(pnp.sp.web.lists.getByTitle('PDI').items.top(top).getPaged()))
+            promises.push(getItems(pnp.sp.web.lists.getByTitle('Batch2').items.top(top).getPaged()))
             promises.push(getItems(pnp.sp.web.lists.getByTitle('Metas').items.top(top).getPaged()))
             promises.push(getItems(pnp.sp.web.lists.getByTitle('Revisoes').items.top(top).getPaged()))
             Promise.all(promises).then(function (response) {
@@ -89,6 +98,7 @@ var RelatorioAPI = (function (pnp) {
         },
         methods: {
             setData: function (pdis) {
+                debugger
                 Vue.set(this, 'data', pdis)
                 Vue.set(this, 'loading', false)
             }
