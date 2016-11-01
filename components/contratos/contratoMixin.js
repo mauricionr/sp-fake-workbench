@@ -1,4 +1,3 @@
-
 var ContratoMixins = (function (Vue, $) {
     return {
         data: function () {
@@ -45,15 +44,24 @@ var ContratoMixins = (function (Vue, $) {
                 dataAprovacao = this.getDateArray(dataAprovacao);
                 dataAprovacao = moment([dataAprovacao[2], dataAprovacao[1], dataAprovacao[0]])
 
-                return ((dataLiberacao.diff(startDate, 'days') >= 0) || (dataLiberacao.diff(lastDate, 'days') <= 0) || (dataAprovacao.diff(startDate, 'days') >= 0) || (dataAprovacao.diff(lastDate, 'days') <= 0)) ? true : false
+                return (
+                    (dataLiberacao.diff(startDate, 'days') >= 0) &&
+                    (dataLiberacao.diff(lastDate, 'days') <= 0) &&
+                    (dataAprovacao.diff(startDate, 'days') >= 0) &&
+                    (dataAprovacao.diff(lastDate, 'days') <= 0)) ? true : false
             },
             getDateArray: function (dateString) {
                 return dateString.split('/');
             },
+            initializeComponent: function initializeComponent() {
+                this.initializeNewForm.call(this)
+                this.setDisableFields.call(this)
+            }
         },
-        created: function () {
-            $(this.initializeNewForm.bind(this))
-            $(this.setDisableFields.bind(this))
+        created: function created() {
+            $(function documentReady() {
+                $.getScript('/_layouts/15/clientpeoplepicker.js', this.initializeComponent.bind(this))
+            }.bind(this))
         },
     }
 })(Vue, jQuery)

@@ -1,4 +1,5 @@
 var ContratoStore = (function (pnp) {
+    pnp.setup({ headers: { "Accept": "application/json; odata=verbose" } });
     return {
         root: 'ContratosAditivos',
         createContratoFolder: function (path) {

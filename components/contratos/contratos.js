@@ -1,5 +1,4 @@
 var ContratosAPI = (function (Vue, $, pnp, ContratoStore, ContratoMixins) {
-    pnp.setup({ headers: { "Accept": "application/json; odata=verbose" } });
     return new Vue({
         el: '#contratos-new-form-app',
         mixins: [ContratoMixins],
@@ -24,7 +23,6 @@ var ContratosAPI = (function (Vue, $, pnp, ContratoStore, ContratoMixins) {
                 $(this.contratoTitle).on('blur', this.contratoBlur.bind(this))
             },
             saveContrato: function () {
-                debugger
                 var dataInicio = document.querySelector(this.dataInicioContrato).value;
                 var dataFim = document.querySelector(this.dataTerminoContrato).value;
                 var dataLiberacao = document.querySelector(this.dataLiberacao).value;

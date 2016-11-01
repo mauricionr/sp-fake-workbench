@@ -32,23 +32,30 @@ var AditivosAPI = (function (Vue, $, pnp, ContratoStore, ContratoMixins) {
             getField: function (seletor, type) {
                 return { seletor: seletor, type: type }
             },
+            setAditivoTitle:function(){
+                Vue.set(this, 'Title', $(this.aditivoTitle).val())
+            },
             initializeNewForm: function () {
-                $.getScript('/_layouts/15/clientpeoplepicker.js', function () {
-                    debugger
-                    $(this.aditivoTitle).on('blur', this.checkAditivoFolder.bind(this))
-                    $(this.contratoSeletor).on('change', this.setContratoId.bind(this))
-                    $(this.numContratoSeletor).on('change', this.setContratoId.bind(this))
-                    $(this.fakeBtnSave).on('click', this.saveAditivo.bind(this))
-                }.bind(this))
+                var contratoID = $(this.contratoSeletor).val();
+                if (contratoID !== '0') {
+                    this.setContratoId(null, contratoID).then(function () {
+                        this.setAditivoTitle();
+                        this.checkAditivoFolder(null, this.Title)
+                    }.bind(this))
+                }
+                $(this.aditivoTitle).on('blur', this.checkAditivoFolder.bind(this))
+                $(this.contratoSeletor).on('change', this.setContratoId.bind(this))
+                $(this.numContratoSeletor).on('change', this.setContratoId.bind(this))
+                $(this.fakeBtnSave).on('click', this.saveAditivo.bind(this))
             },
             saveAditivo: function (event) {
                 if (this.createdNow) this.originalSave();
                 if (this.folderAlredyExist) {
                     return this.originalSave();
                 } else {
-                    if (!this.aditivoTitle) return
+                    if (!this.Title) return
                     this.ContratoStore
-                        .createAditivoFolder(this.contrato.Title, this.aditivoTitle)
+                        .createAditivoFolder(this.contrato.Title, this.Title)
                         .then(this.originalSave)
                 }
             },
@@ -78,10 +85,12 @@ var AditivosAPI = (function (Vue, $, pnp, ContratoStore, ContratoMixins) {
                     }
                 }
             },
-            setContratoId: function (event) {
+            setContratoId: function (event, id) {
+                event = !event ? { target: { value: null } } : event
                 if (event.target.value === '0') return
-                Vue.set(this, 'contratoID', event.target.value);
-                pnp.sp.web
+                Vue.set(this, 'contratoID', event.target.value || id);
+                return pnp.sp
+                    .web
                     .lists
                     .getByTitle('Contratos')
                     .items
@@ -94,10 +103,11 @@ var AditivosAPI = (function (Vue, $, pnp, ContratoStore, ContratoMixins) {
                         this.setContratoVals()
                     }.bind(this))
             },
-            checkAditivoFolder: function (event) {
+            checkAditivoFolder: function (event, title) {
+                event = !event ? { target: { value: (title || null) } } : event
                 if (!event.target.value) return
-                Vue.set(this, 'aditivoTitle', event.target.value)
-                this.ContratoStore.checkContratoFolderExist('/' + this.contrato.Title + '/' + event.target.value)
+                this.setAditivoTitle()
+                this.ContratoStore.checkContratoFolderExist('/' + this.contrato.Title + '/' + this.Title)
                     .then(this.setFolderAlredyExist.bind(this))
                     .catch(this.notExistFolder.bind(this))
             }

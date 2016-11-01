@@ -30,31 +30,32 @@ var RelatorioAPI = (function (pnp) {
     }
     function getItems(promise, response, firstResolve) {
         response = response || [];
+        function concatData(items) {
+            response = response.concat(items.results)
+            return items;
+        }
+        function resolveOrGetMore(items) {
+            if (items.hasNext) {
+                if (!firstResolve) {
+                    firstResolve = resolve;
+                }
+                getItems(items.getNext(), response, firstResolve)
+            } else {
+                (firstResolve ? firstResolve(response) : resolve(items.results))
+            }
+        }
         return new Promise(function (resolve, reject) {
-            promise
-                .then(function (items) {
-                    response = response.concat(items.results)
-                    return items;
-                })
-                .then(function (items) {
-                    if (items.hasNext) {
-                        if (!firstResolve) {
-                            firstResolve = resolve;
-                        }
-                        getItems(items.getNext(), response, firstResolve)
-                    } else {
-                        if (firstResolve) {
-                            firstResolve(response)
-                        } else {
-                            resolve(items.results)
-                        }
-                    }
-                })
+            return promise
+                .then(concatData)
+                .then(resolveOrGetMore)
         })
     }
     function getData(top) {
         return new Promise(function (resolve, reject) {
             var promises = [];
+            pnp.sp.web.lists.getByTitle('Batch2').get().then(function(){
+                debugger
+            })
             promises.push(getItems(pnp.sp.web.lists.getByTitle('Batch2').items.top(top).getPaged()))
             promises.push(getItems(pnp.sp.web.lists.getByTitle('Metas').items.top(top).getPaged()))
             promises.push(getItems(pnp.sp.web.lists.getByTitle('Revisoes').items.top(top).getPaged()))
@@ -63,6 +64,7 @@ var RelatorioAPI = (function (pnp) {
             })
         })
     }
+    
     function mapData(responses) {
         return responses.PDIs.map(function (current) {
             current.Revisoes = responses.Revisoes.filter(findPdiItem.bind(null, current))
