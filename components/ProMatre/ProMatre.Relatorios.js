@@ -100,21 +100,18 @@
 					'SPRELATORIOPACIENTEHISTORICO',
 					'Include(PACIENTE_ID, PACIENTE, CPF_DO_RESPONSAVEL, ATENDIMENTO_ID, DATA_APLICACAO, DOSE, VACINA_ID, NOME_VACINA, LOTE, APLICADO_POR, MEDICO)',
 					'SP_GET-PACIENTE-Read-List',
-					'<Filter Name="ID" Value="' + idPaciente + '" /> \
-								<Filter Name="DT_INI" Value="' + DataCorte + '" /> \
-								<Filter Name="PageNumber" Value="'+ '1' +'" /> \
-								<Filter Name="RowspPage" Value="'+ '1000' +'" /> ',
-					'<FieldRef Name="PACIENTE_ID" /> \
-								<FieldRef Name="PACIENTE" /> \
-								<FieldRef Name="CPF_DO_RESPONSAVEL" /> \
-								<FieldRef Name="ATENDIMENTO_ID" /> \
-								<FieldRef Name="DATA_APLICACAO" /> \
-								<FieldRef Name="DOSE" /> \
-								<FieldRef Name="VACINA_ID" /> \
-								<FieldRef Name="NOME_VACINA" /> \
-								<FieldRef Name="LOTE" /> \
-								<FieldRef Name="APLICADO_POR" /> \
-								<FieldRef Name="MEDICO" /> '
+					'<Filter Name="ID" Value="' + nome + '" /><Filter Name="DT_INI" Value="' + DataCorte + '" /><Filter Name="PageNumber" Value="'+ '1' +'" /><Filter Name="RowspPage" Value="'+ '1000' +'" /> ',
+					'<FieldRef Name="PACIENTE_ID" />\
+					<FieldRef Name="PACIENTE" />\
+					<FieldRef Name="CPF_DO_RESPONSAVEL" />\
+					<FieldRef Name="ATENDIMENTO_ID" />\
+					<FieldRef Name="DATA_APLICACAO" />\
+					<FieldRef Name="DOSE" />\
+					<FieldRef Name="VACINA_ID" />\
+					<FieldRef Name="NOME_VACINA" />\
+					<FieldRef Name="LOTE" />\
+					<FieldRef Name="APLICADO_POR" />\
+					<FieldRef Name="MEDICO" /> '
 
 				)
 			},
