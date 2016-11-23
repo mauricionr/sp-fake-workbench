@@ -6,6 +6,7 @@
             GetCurso: 'GetCursoJSON?CursoID=',
             GetTurma: 'GetTurmaJSON?TurmaID='
         },
+        filter:null,
         data:[],
         turmas:[],
         curso:'FixCurso',
@@ -37,8 +38,10 @@
             generateReport:function(){
                 this.method = this.getHashValue('method');
                 this.ids = this.getHashValue('ids');
-                this[this.method](this.ids.split(';'));
-                this[this.method + 's']()
+                if(this.ids){
+                    this[this.method](this.ids.split(';'));
+                    this[this.method + 's']()
+                }
             },
             get: function(endPoint, key) {
                 this.setLoading()
@@ -97,6 +100,25 @@
     var RelatorioComponent = Vue.extend({   
         props:['data', 'fields', 'keys', 'filters', 'report', 'current'],
         mixins:[RelatorioMixins],
+        ready:function(){
+            $(function(){
+                $(this.$el).find('input[type="search"]').autocomplete({
+                    source: function (request, response) {
+                        response(this.turmas.d.results.filter(function(request, current){
+                            if(current.Title.toLowerCase().indexOf(request.term.toLowerCase()) !== -1){
+                                current.label = current.Title
+                                current.id = current.ID;
+                                return current
+                            }  
+                        }.bind(this, request)))
+                    }.bind(this),
+                    minLength: 3,
+                    select: function(event, ui){
+                        Vue.set(this, 'filter', ui.item.ID)
+                    }.bind(this)
+                })
+            }.bind(this))
+        },
         methods:{
             showFields:function(key){
                 return key !== this.curso && key !== this.percentual && key !== this.status;
@@ -129,11 +151,8 @@
         template: [
             '<section id="relatorio-root">',
                 '<div class="relatorio-filter">',
-                    '<select v-model="filter">',
-                        '<option :selected="!current" value="0">Selecione</option>',
-                        '<option v-for="f in filters.d.results" :selected="current == f.ID" :value="f.ID">{{f.Title}}</option>',
-                    '</select>',
-                    '<input type="button" value="Gerar relatório" v-on:click="report()" />',
+                '<input type="search" ref="tinput" v-model="searchTerm" id="search" placeholder="Insira uma turma" class="ui-autocomplete-input" autocomplete="off" />',
+                '<input type="button" value="Gerar relatório" v-on:click="report()" />',
                 '</div>',
                 '<table class="relatorio-table">',
                     '<thead>',
