@@ -4,9 +4,9 @@
 
 ## Usage
 
-`git clone {this repo}`
+`git clone https://github.com/mauricionr/sp-fake-workbench.git`
 
-`cd components`
+`cd sp-fake-workbench`
 
 `npm install`
 
