@@ -1,3 +1,7 @@
+# while spfx is not in production i'm using this stack to create components in sharepoint
+
+***feel free to fork and change to your needs***
+
 ## Usage
 
 `git clone {this repo}`
