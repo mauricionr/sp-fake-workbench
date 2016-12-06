@@ -6,8 +6,7 @@
 </asp:Content>
 
 <asp:Content ContentPlaceHolderId="PlaceHolderMain" runat="server">
-    <div id="scribe-app"></div>
+    <script src="pnp.min.js"></script>
     <script src="vue.js"></script>
-    <script src="jquery.js"></script>
-    <script src="index.js"></script>
+    <script src="main.js"></script>
 </asp:Content>
